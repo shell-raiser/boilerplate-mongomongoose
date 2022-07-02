@@ -79,8 +79,8 @@ const findEditThenSave = (personId, done) => {
 
 const findAndUpdate = (personName, done) => {
     const ageToSet = 20;
-    Person.findOneAndUpdate({ name: personName }, {age:ageToSet}, { new: true },(err,data)=>{
-        if(err) return console.log(err);
+    Person.findOneAndUpdate({ name: personName }, { age: ageToSet }, { new: true }, (err, data) => {
+        if (err) return console.log(err);
         done(null, data);
     });
 }
@@ -94,18 +94,34 @@ const removeById = (personId, done) => {
 
 const removeManyPeople = (done) => {
     const nameToRemove = "Mary";
-    Person.remove({name:nameToRemove},(err,data)=>{
-        if(err) return console.log(err);
+    Person.remove({ name: nameToRemove }, (err, data) => {
+        if (err) return console.log(err);
         done(null, data);
     });
-    
+
 };
 
 const queryChain = (done) => {
     const foodToSearch = "burrito";
 
-    done(null /*, data*/);
+    Person.find({ favoriteFoods: foodToSearch }, function(err, personsFound) {
+        console.log(personsFound);
+        if (err) {
+            return console.log(err);
+        };
+    })
+        .sort({ name: 'asc' })
+        .limit(2).select('-age')
+        .exec(function(err, data) {
+            console.log(data);
+            if (err) {
+                return console.error(err);
+            } else {
+                done(null, data);
+            };
+        });
 };
+queryChain(() => { });
 
 /** **Well Done !!**
 /* You completed these challenges, let's go celebrate !
